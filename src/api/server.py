@@ -9,8 +9,11 @@ src_path = Path(__file__).parent.parent
 if str(src_path) not in sys.path:
     sys.path.append(str(src_path))
 
+import asyncio
+import json
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
 from agent.workflow import create_matching_workflow
@@ -38,6 +41,7 @@ app.add_middleware(
 class MatchRequest(BaseModel):
     cv_text: str
     advanced: bool = False
+    ultra: bool = False
 
 @app.post("/api/match")
 async def match_cv(request: MatchRequest) -> Dict[str, Any]:
@@ -45,7 +49,7 @@ async def match_cv(request: MatchRequest) -> Dict[str, Any]:
     if not request.cv_text or not request.cv_text.strip():
         raise HTTPException(status_code=400, detail="CV text cannot be empty.")
 
-    logger.info("Received matching request for CV (length: %d, advanced: %s)", len(request.cv_text), request.advanced)
+    logger.info("Received matching request for CV (length: %d, advanced: %s, ultra: %s)", len(request.cv_text), request.advanced, request.ultra)
     
     try:
         # Create and invoke the workflow
@@ -55,6 +59,7 @@ async def match_cv(request: MatchRequest) -> Dict[str, Any]:
         initial_state = AgentState(
             raw_cv_text=request.cv_text,
             advanced=request.advanced,
+            ultra=request.ultra,
             user_profile=None,
             graph_results=[],
             vector_results=[],
@@ -78,6 +83,60 @@ async def match_cv(request: MatchRequest) -> Dict[str, Any]:
     except Exception as e:
         logger.error("Error during matching workflow: %s", str(e), exc_info=True)
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
+
+@app.post("/api/match/stream")
+async def match_cv_stream(request: MatchRequest):
+    """Run the matching workflow and stream progress events via SSE."""
+    if not request.cv_text or not request.cv_text.strip():
+        raise HTTPException(status_code=400, detail="CV text cannot be empty.")
+        
+    logger.info("Received streaming matching request for CV (length: %d, advanced: %s, ultra: %s)", 
+                len(request.cv_text), request.advanced, request.ultra)
+                
+    async def event_generator():
+        queue = asyncio.Queue()
+        
+        async def progress_callback(event_type: str, data: Any = None):
+            await queue.put({"type": event_type, "data": data})
+            
+        async def run_workflow():
+            try:
+                workflow = create_matching_workflow()
+                initial_state = AgentState(
+                    raw_cv_text=request.cv_text,
+                    advanced=request.advanced,
+                    ultra=request.ultra,
+                    user_profile=None,
+                    graph_results=[],
+                    vector_results=[],
+                    ranked_organizations=[],
+                    match_result=None
+                )
+                config = {"configurable": {"progress_callback": progress_callback}}
+                final_state = await workflow.ainvoke(initial_state, config=config)
+                match_data = final_state.get("match_result")
+                await queue.put({"type": "complete", "data": match_data})
+            except Exception as e:
+                logger.error("Error in streaming workflow: %s", str(e), exc_info=True)
+                await queue.put({"type": "error", "data": str(e)})
+                
+        # Start the workflow in the background
+        task = asyncio.create_task(run_workflow())
+        
+        try:
+            while True:
+                item = await queue.get()
+                yield f"data: {json.dumps(item)}\n\n"
+                if item["type"] in ("complete", "error"):
+                    break
+        except asyncio.CancelledError:
+            logger.info("Streaming client disconnected. Cancelling matching workflow.")
+            task.cancel()
+            raise
+        finally:
+            await task
+            
+    return StreamingResponse(event_generator(), media_type="text/event-stream")
 
 @app.get("/health")
 def health_check():

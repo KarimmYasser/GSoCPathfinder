@@ -1,13 +1,17 @@
 """Node 2A: Query Neo4j for exact skill and topic matches."""
 
+from langchain_core.runnables import RunnableConfig
 from agent.state import AgentState
 from graph.client import get_neo4j_client
 from graph.queries import GraphQueries
 from config.settings import get_settings
 
-async def query_graph_node(state: AgentState) -> dict:
+async def query_graph_node(state: AgentState, config: RunnableConfig = None) -> dict:
     """Queries Neo4j based on the extracted user profile."""
     print("Agent Node: Querying Knowledge Graph...")
+    callback = config.get("configurable", {}).get("progress_callback") if config else None
+    if callback:
+        await callback("info", "Querying Neo4j Knowledge Graph...")
     
     profile = state["user_profile"]
     if not profile:
@@ -51,5 +55,7 @@ async def query_graph_node(state: AgentState) -> dict:
             
     results = list(org_map.values())
     print(f"   Graph returned {len(results)} candidate organizations.")
+    if callback:
+        await callback("info", f"Graph query complete. Found {len(results)} candidate organizations.")
     
     return {"graph_results": results}

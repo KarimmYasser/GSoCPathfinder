@@ -4,6 +4,7 @@ import ReplayIcon from '@mui/icons-material/Replay';
 import OrgCard from './OrgCard';
 import ChatWidget from './ChatWidget';
 import GraphViz from './GraphViz';
+import { renderMarkdown } from '../utils/markdown';
 
 const MatchResults = ({ results, onReset }) => {
   const { user_profile, rankings } = results;
@@ -19,12 +20,12 @@ const MatchResults = ({ results, onReset }) => {
           Start Over
         </Button>
       </Box>
-
+ 
       <Paper elevation={2} sx={{ p: 3, mb: 4, borderRadius: 3, bgcolor: 'primary.light', color: 'primary.contrastText' }}>
         <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>Your Profile Analysis</Typography>
-        <Typography variant="body1">
-          {user_profile.summary}
-        </Typography>
+        <Box sx={{ color: 'inherit' }}>
+          {renderMarkdown(user_profile.summary)}
+        </Box>
       </Paper>
 
       <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>

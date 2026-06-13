@@ -104,9 +104,16 @@ function App() {
         </Toolbar>
       </AppBar>
 
-      <Container maxWidth="lg" sx={{ py: 6 }}>
+      <Container maxWidth="lg" sx={{ py: 4 }}>
         {!results ? (
-          <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: 2,
+            }}
+          >
             <Typography
               variant="h4"
               component="h1"
@@ -120,7 +127,7 @@ function App() {
               color="text.secondary"
               sx={{
                 textAlign: "center",
-                mb: 4,
+                mb: 2,
                 maxWidth: "600px",
               }}
             >

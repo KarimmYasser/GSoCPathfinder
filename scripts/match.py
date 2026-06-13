@@ -23,9 +23,14 @@ async def main():
     and open source contribution. I have worked with Docker and Kubernetes for deployments.
     """
     
-    # Check if a file was passed
-    if len(sys.argv) > 1:
-        cv_file = Path(sys.argv[1])
+    # Determine advanced and ultra flags from CLI arguments
+    advanced = "--advanced" in sys.argv or "--ultra" in sys.argv
+    ultra = "--ultra" in sys.argv
+    
+    # Filter out CLI option flags from file path check
+    file_args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    if file_args:
+        cv_file = Path(file_args[0])
         if cv_file.exists():
             with open(cv_file, "r", encoding="utf-8") as f:
                 cv_text = f.read()
@@ -33,12 +38,14 @@ async def main():
     else:
         print("Using default hardcoded CV for testing.")
         
-    print("\nStarting Matching Workflow...\n")
+    print(f"\nStarting Matching Workflow (advanced: {advanced}, ultra: {ultra})...\n")
     
     app = create_matching_workflow()
     
     initial_state = AgentState(
         raw_cv_text=cv_text,
+        advanced=advanced,
+        ultra=ultra,
         user_profile=None,
         graph_results=[],
         vector_results=[],

@@ -11,6 +11,7 @@ class AgentState(TypedDict):
     # Input
     raw_cv_text: str
     advanced: bool
+    ultra: bool
     
     # Intermediate State
     user_profile: UserProfile | None

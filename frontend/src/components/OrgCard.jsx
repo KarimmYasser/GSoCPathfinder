@@ -1,8 +1,43 @@
 import { useState } from 'react';
-import { Card, CardContent, CardActions, Typography, Button, Box, Chip, Dialog, DialogTitle, DialogContent, DialogActions, CircularProgress } from '@mui/material';
+import { Card, CardContent, CardActions, Typography, Button, Box, Chip, Dialog, DialogTitle, DialogContent, DialogActions, CircularProgress, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
 import BugReportIcon from '@mui/icons-material/BugReport';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { renderMarkdown } from '../utils/markdown';
+
+const parseExplanation = (explanation) => {
+  if (!explanation) return null;
+  
+  if (!explanation.includes('### ')) {
+    return null;
+  }
+  
+  const sections = {};
+  const parts = explanation.split(/(?=### )/);
+  
+  parts.forEach(part => {
+    const lines = part.trim().split('\n');
+    const headerLine = lines[0].replace('###', '').trim();
+    const content = lines.slice(1).join('\n').trim();
+    
+    if (headerLine === 'MATCH JUSTIFICATION') {
+      sections.justification = content;
+    } else if (headerLine === 'RECOMMENDED CONTRIBUTOR PROJECT') {
+      sections.project = content;
+    } else if (headerLine === 'MAINTAINER CRITIQUE & RISK ASSESSMENT') {
+      sections.critique = content;
+    } else if (headerLine === 'ACTIONABLE PROPOSAL STRATEGY & ROADMAP') {
+      sections.roadmap = content;
+    } else if (headerLine === 'RECOMMENDATION SCORE') {
+      sections.score = content;
+    } else {
+      sections[headerLine.toLowerCase().replace(/\s+/g, '_')] = content;
+    }
+  });
+  
+  return sections;
+};
 
 const OrgCard = ({ org, cvText }) => {
   const [issues, setIssues] = useState(null);
@@ -123,11 +158,85 @@ const OrgCard = ({ org, cvText }) => {
           )}
         </Box>
 
-        {org.explanation && (
-          <Box sx={{ bgcolor: 'grey.100', p: 2, borderRadius: 1, mt: 2 }}>
-            <Typography variant="body2" fontStyle="italic">"{org.explanation}"</Typography>
-          </Box>
-        )}
+        {(() => {
+          const parsed = parseExplanation(org.explanation);
+          if (parsed) {
+            return (
+              <Box sx={{ mt: 2, display: 'flex', flexDirection: 'column', gap: 1, textAlign: 'left' }}>
+                {parsed.justification && (
+                  <Box sx={{ bgcolor: 'grey.50', p: 2, borderRadius: 2, borderLeft: '4px solid #1a73e8' }}>
+                    <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: 'primary.main', mb: 0.5, fontFamily: "'Roboto Mono', monospace" }}>
+                      Match Justification
+                    </Typography>
+                    <Box sx={{ fontFamily: "'Roboto Mono', monospace" }}>{renderMarkdown(parsed.justification)}</Box>
+                  </Box>
+                )}
+
+                {parsed.project && (
+                  <Accordion sx={{ 
+                    borderRadius: '8px !important', 
+                    boxShadow: 'none', 
+                    border: '1px solid rgba(0,0,0,0.08)',
+                    '&::before': { display: 'none' } 
+                  }}>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ minHeight: 48 }}>
+                      <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: 'success.main', fontFamily: "'Roboto Mono', monospace" }}>
+                        🎯 Recommended Contributor Project
+                      </Typography>
+                    </AccordionSummary>
+                    <AccordionDetails sx={{ pt: 0, bgcolor: 'rgba(76, 175, 80, 0.02)', textAlign: 'left' }}>
+                      <Box sx={{ fontFamily: "'Roboto Mono', monospace" }}>{renderMarkdown(parsed.project)}</Box>
+                    </AccordionDetails>
+                  </Accordion>
+                )}
+
+                {parsed.critique && (
+                  <Accordion sx={{ 
+                    borderRadius: '8px !important', 
+                    boxShadow: 'none', 
+                    border: '1px solid rgba(0,0,0,0.08)',
+                    '&::before': { display: 'none' } 
+                  }}>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ minHeight: 48 }}>
+                      <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: 'error.main', fontFamily: "'Roboto Mono', monospace" }}>
+                        ⚠️ Maintainer Critique & Risk Assessment
+                      </Typography>
+                    </AccordionSummary>
+                    <AccordionDetails sx={{ pt: 0, bgcolor: 'rgba(244, 67, 54, 0.02)', textAlign: 'left' }}>
+                      <Box sx={{ fontFamily: "'Roboto Mono', monospace" }}>{renderMarkdown(parsed.critique)}</Box>
+                    </AccordionDetails>
+                  </Accordion>
+                )}
+
+                {parsed.roadmap && (
+                  <Accordion sx={{ 
+                    borderRadius: '8px !important', 
+                    boxShadow: 'none', 
+                    border: '1px solid rgba(0,0,0,0.08)',
+                    '&::before': { display: 'none' } 
+                  }}>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ minHeight: 48 }}>
+                      <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: 'secondary.main', fontFamily: "'Roboto Mono', monospace" }}>
+                        🚀 Actionable Proposal Strategy & Roadmap
+                      </Typography>
+                    </AccordionSummary>
+                    <AccordionDetails sx={{ pt: 0, bgcolor: 'rgba(234, 67, 53, 0.02)', textAlign: 'left' }}>
+                      <Box sx={{ fontFamily: "'Roboto Mono', monospace" }}>{renderMarkdown(parsed.roadmap)}</Box>
+                    </AccordionDetails>
+                  </Accordion>
+                )}
+              </Box>
+            );
+          }
+          
+          return org.explanation ? (
+            <Box sx={{ bgcolor: 'grey.100', p: 2, borderRadius: 1, mt: 2, textAlign: 'left' }}>
+              <Typography variant="body2" fontStyle="italic" sx={{ fontFamily: "'Roboto Mono', monospace" }}>
+                "{org.explanation}"
+              </Typography>
+            </Box>
+          ) : null;
+        })()}
 
         {issues && issues.length > 0 && (
           <Box sx={{ mt: 3, p: 2, bgcolor: 'grey.50', borderRadius: 1, border: '1px solid', borderColor: 'grey.200' }}>
@@ -178,9 +287,9 @@ const OrgCard = ({ org, cvText }) => {
       <Dialog open={!!proposal} onClose={() => setProposal(null)} maxWidth="md" fullWidth>
         <DialogTitle>Draft Proposal for {org.canonical_name}</DialogTitle>
         <DialogContent dividers>
-          <Typography component="pre" sx={{ whiteSpace: 'pre-wrap', fontFamily: 'monospace', fontSize: '0.85rem' }}>
-            {proposal}
-          </Typography>
+          <Box sx={{ whiteSpace: 'pre-wrap', fontFamily: "'Roboto Mono', monospace", fontSize: '0.85rem', textAlign: 'left' }}>
+            {renderMarkdown(proposal)}
+          </Box>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setProposal(null)}>Close</Button>
@@ -194,9 +303,9 @@ const OrgCard = ({ org, cvText }) => {
       <Dialog open={!!roadmap} onClose={() => setRoadmap(null)} maxWidth="md" fullWidth>
         <DialogTitle>Learning Roadmap for {org.canonical_name}</DialogTitle>
         <DialogContent dividers>
-          <Typography component="pre" sx={{ whiteSpace: 'pre-wrap', fontFamily: 'monospace', fontSize: '0.85rem' }}>
-            {roadmap}
-          </Typography>
+          <Box sx={{ whiteSpace: 'pre-wrap', fontFamily: "'Roboto Mono', monospace", fontSize: '0.85rem', textAlign: 'left' }}>
+            {renderMarkdown(roadmap)}
+          </Box>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setRoadmap(null)}>Close</Button>
