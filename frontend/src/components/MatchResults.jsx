@@ -21,9 +21,9 @@ const MatchResults = ({ results, onReset }) => {
         </Button>
       </Box>
  
-      <Paper elevation={2} sx={{ p: 3, mb: 4, borderRadius: 3, bgcolor: 'primary.light', color: 'primary.contrastText' }}>
-        <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>Your Profile Analysis</Typography>
-        <Box sx={{ color: 'inherit' }}>
+      <Paper elevation={2} sx={{ p: 3, mb: 4, borderRadius: 3, background: 'linear-gradient(135deg, rgba(26,115,232,0.15) 0%, rgba(26,115,232,0.05) 100%)', border: '1px solid', borderColor: 'primary.main', borderOpacity: 0.2 }}>
+        <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', color: 'primary.main' }}>Your Profile Analysis</Typography>
+        <Box>
           {renderMarkdown(user_profile.summary)}
         </Box>
       </Paper>

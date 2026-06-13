@@ -157,8 +157,9 @@ const ChatWidget = ({ context }) => {
             left: 4,
             width: 6,
             height: 6,
-            borderLeft: '2px solid rgba(0, 0, 0, 0.35)',
-            borderTop: '2px solid rgba(0, 0, 0, 0.35)'
+            borderLeft: '2px solid',
+            borderTop: '2px solid',
+            borderColor: 'divider',
           }
         }}
       />
@@ -219,7 +220,7 @@ const ChatWidget = ({ context }) => {
               display: 'flex', 
               flexDirection: 'column', 
               gap: 2, 
-              bgcolor: 'grey.50' 
+              bgcolor: 'background.default' 
             }}
           >
             {messages.map((msg, idx) => (
@@ -228,7 +229,7 @@ const ChatWidget = ({ context }) => {
                   elevation={1} 
                   sx={{ 
                     p: 1.5, 
-                    bgcolor: msg.role === 'user' ? 'primary.main' : 'white',
+                    bgcolor: msg.role === 'user' ? 'primary.main' : 'background.paper',
                     color: msg.role === 'user' ? 'primary.contrastText' : 'text.primary',
                     borderRadius: 2,
                     borderTopRightRadius: msg.role === 'user' ? 0 : undefined,
@@ -252,7 +253,7 @@ const ChatWidget = ({ context }) => {
           </Box>
 
           {/* Input Area */}
-          <Box component="form" onSubmit={handleSend} p={1.5} bgcolor="white" borderTop="1px solid" borderColor="grey.200" display="flex" gap={1}>
+          <Box component="form" onSubmit={handleSend} p={1.5} bgcolor="background.paper" borderTop="1px solid" borderColor="divider" display="flex" gap={1}>
             <TextField
               size="small"
               fullWidth
