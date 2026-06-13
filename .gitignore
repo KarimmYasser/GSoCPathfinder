@@ -1,0 +1,31 @@
+# Virtual Environments
+.venv/
+venv/
+env/
+rust_engine/.venv/
+
+# Python caches and compiles
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Node dependencies
+node_modules/
+frontend/node_modules/
+
+# Rust build target
+rust_engine/target/
+
+# Build distribution files
+dist/
+frontend/dist/
+
+# Local environment variables & secrets
+.env
+.env.local
+
+# OS and system files
+.DS_Store
+Thumbs.db
+*.stackdump
