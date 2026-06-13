@@ -24,68 +24,199 @@ GSoC Pathfinder helps aspiring students find the best Google Summer of Code orga
 
 ---
 
-## 🛠️ Architecture
+## 🧠 Core Architecture
 
+### LangGraph Agent Workflow
+The matching engine runs on a structured **LangGraph** execution pipeline:
+
+```text
+                  ┌───────────────────────┐
+                  │         START         │
+                  └───────────┬───────────┘
+                              │
+                              ▼
+                  ┌───────────────────────┐
+                  │       extractor       │ (Extracts profile from CV text)
+                  └───────────┬───────────┘
+                              │
+               ┌──────────────┴──────────────┐
+               ▼ (Parallel Search)           ▼ (Parallel Search)
+   ┌───────────────────────┐     ┌───────────────────────┐
+   │     graph_querier     │     │    vector_searcher    │
+   │ (Queries Neo4j Graph) │     │ (Queries Qdrant Vect) │
+   └───────────┬───────────┘     └───────────┬───────────┘
+               │                             │
+               └──────────────┬──────────────┘
+                              │ (Fan-In Join)
+                              ▼
+                  ┌───────────────────────┐
+                  │        merger         │ (Merges & applies scoring formula)
+                  └───────────┬───────────┘
+                              │
+                              ▼
+                  ┌───────────────────────┐
+                  │       explainer       │ (Generates LLM justifications)
+                  └───────────┬───────────┘
+                              │
+                              ▼
+                  ┌───────────────────────┐
+                  │          END          │
+                  └───────────────────────┘
 ```
-                      ┌───────────────┐
-                      │    User CV    │
-                      └───────┬───────┘
-                              ▼
-                      ┌───────────────┐
-                      │   LLM Agent   │
-                      └───────┬───────┘
-                              ▼ (Extracted Skills/Interests)
-             ┌────────────────┼────────────────┐
-             ▼                ▼                ▼
-       ┌───────────┐    ┌───────────┐    ┌───────────┐
-       │   Neo4j   │    │  Qdrant   │    │   Rust    │
-       │ (Graph)   │    │ (Vector)  │    │ (Scoring) │
-       └─────┬─────┘    └─────┬─────┘    └─────┬─────┘
-             │                │                │
-             └────────────────┼────────────────┘
-                              ▼
-                      ┌───────────────┐
-                      │  Ranked Orgs  │
-                      └───────┬───────┘
-                              ▼
-        ┌─────────────────────┼─────────────────────┐
-        ▼                     ▼                     ▼
-┌──────────────┐      ┌──────────────┐      ┌──────────────┐
-│  Interactive │      │      CV      │      │   Proposal   │
-│  Graph UI    │      │  Roadmaps    │      │   Drafts     │
-└──────────────┘      └──────────────┘      └──────────────┘
+
+1. **`extractor`**: Extracts structured profile data (programming languages, frameworks, interests) from the user's raw CV text using LLM function calling.
+2. **`graph_querier`**: Queries Neo4j for organizations matching extracted technologies and topics.
+3. **`vector_searcher`**: Embeds the CV text and queries Qdrant for semantically relevant historical GSoC projects.
+4. **`merger`**: Combines vector and graph records, executing scoring functions (including the Rust Jaccard module) to compute rank scores.
+5. **`explainer`**: Uses the LLM to generate narrative matching explanations for the top matched organizations.
+
+### Rust Scoring Engine (`rust_engine`)
+The weighted Jaccard similarity score (Factor 1: Skill Overlap) is compiled to binary machine code in Rust for performance:
+* **F1 Algorithm:** Computes Jaccard index based on the intersection and union of CV skills and organization technologies.
+* **CV Frequency Weighting:** Searches the raw CV text for each matching skill. Skills that appear more frequently in the user's CV carry higher weights during the Jaccard intersection calculation to favor core strengths.
+
+---
+
+## 💾 Database Schemas
+
+### 1. Neo4j Graph Schema
+Neo4j models the GSoC network across years with the following nodes and relationships:
+* **Nodes:**
+  - `(o:Organization)` - Canonical GSoC organization details.
+  - `(p:Project)` - Historical accepted GSoC projects.
+  - `(t:Technology)` - Programming languages, libraries, and frameworks.
+  - `(tp:Topic)` - Domain categories (e.g., machine learning, security, web).
+  - `(y:YearProfile)` - An organization's specific participation profile for a single GSoC year.
+* **Relationships:**
+  - `(o)-[:HAS_PROFILE]->(y)`
+  - `(y)-[:USES]->(t)`
+  - `(y)-[:FOCUSES_ON]->(tp)`
+  - `(y)-[:ACCEPTED_PROJECT]->(p)`
+
+### 2. Qdrant Vector Payload
+The `gsoc_projects` collection indexes historical projects. Each vector has the following metadata payload:
+```json
+{
+  "project_title": "string",
+  "project_description": "string",
+  "org_canonical_name": "string",
+  "year": 2024,
+  "technologies": ["string"],
+  "topics": ["string"]
+}
 ```
 
 ---
 
-## 📦 Project Structure
+## 📡 REST API Specifications
 
-```text
-GSoCPathfinder/
-├── Data/                   # 11 years of GSoC JSON datasets (2016–2026)
-├── rust_engine/            # High-performance Rust scoring crate (PyO3)
-│   ├── src/lib.rs          # Jaccard and scoring algorithms
-│   ├── Cargo.toml          # Rust dependencies
-│   └── pyproject.toml      # Maturin build settings
-├── frontend/               # React / Vite Single Page Application
-│   ├── src/
-│   │   ├── components/     # UI elements (GraphViz, ChatWidget, OrgCard, CVInput)
-│   │   ├── App.jsx         # App container and theme provider
-│   │   └── index.css       # Core typography (Roboto Mono)
-│   ├── package.json        # Frontend configuration
-│   └── vite.config.js      # Dev server settings
-├── src/                    # Backend API and Agent Workflows
-│   ├── agent/              # LangGraph orchestration state & nodes
-│   ├── api/                # FastAPI endpoints (matching, chat, proposal, roadmap)
-│   ├── config/             # YAML configurations (weights, synonyms, settings)
-│   ├── graph/              # Neo4j Client connections and schemas
-│   ├── vector/             # Qdrant Client connections and collections
-│   ├── scoring/            # Scoring rankers and weights loading
-│   ├── llm/                # OpenAI/Local LM Studio client wrappers
-│   └── models.py           # Pydantic schemas
-├── scripts/                # CLI runners (ingestion, validation, match tests)
-├── docker-compose.yml      # DB services (Neo4j Community + Qdrant)
-└── pyproject.toml          # uv backend settings
+The FastAPI backend exposes the following endpoints:
+
+### 1. Match CV
+* **Endpoint:** `POST /api/match`
+* **Request Payload:**
+  ```json
+  { "cv_text": "Full text content of the user's CV/resume..." }
+  ```
+* **Response:**
+  Returns a `MatchResult` schema containing the extracted `user_profile` and a list of `RankedOrganization` objects, each with detailed sub-score breakdown (Skill overlap, semantic match, stability, etc.) and LLM explanation text.
+
+### 2. Match Assistant Chat
+* **Endpoint:** `POST /api/chat`
+* **Request Payload:**
+  ```json
+  {
+    "messages": [
+      { "role": "user", "content": "Tell me more about their machine learning projects." }
+    ],
+    "context": [ ...list of matched organizations... ]
+  }
+  ```
+* **Response:**
+  ```json
+  { "reply": "LLM assistant response formatted in Markdown..." }
+  ```
+
+### 3. Draft Proposal
+* **Endpoint:** `POST /api/proposal`
+* **Request Payload:**
+  ```json
+  {
+    "cv_text": "User CV text...",
+    "org_name": "Python Software Foundation",
+    "org_desc": "Organization description..."
+  }
+  ```
+* **Response:**
+  ```json
+  { "proposal": "Custom GSoC proposal draft (Markdown)..." }
+  ```
+
+### 4. Optimize CV (Learning Roadmap)
+* **Endpoint:** `POST /api/optimize_cv`
+* **Request Payload:**
+  Same as `/api/proposal`.
+* **Response:**
+  ```json
+  { "roadmap": "Gap analysis and learning timeline roadmap..." }
+  ```
+
+### 5. Fetch Graph Data
+* **Endpoint:** `POST /api/graph_data`
+* **Request Payload:**
+  ```json
+  {
+    "skills": ["python", "go", "react"],
+    "org_names": ["Kubeflow", "SCoRe Lab"]
+  }
+  ```
+* **Response:**
+  Returns a JSON graph structure (`{ "nodes": [...], "links": [...] }`) mapping connections between the user, their skills, organizations, and their technologies.
+
+### 6. GitHub Good First Issues
+* **Endpoint:** `POST /api/issues`
+* **Request Payload:**
+  ```json
+  { "url": "https://github.com/org/repo" }
+  ```
+* **Response:**
+  List of beginners' GitHub issues fetched dynamically using GitHub APIs.
+
+---
+
+## ⚙️ Environment Variables
+
+Configure the following variables in your `.env` file:
+
+```ini
+# === LLM Provider Configuration ===
+LLM_PROVIDER=local                          # "local" (LM Studio/Ollama) or "remote" (OpenAI)
+
+# Chat Model Settings
+LLM_BASE_URL=http://localhost:1234/v1       # Endpoint of local provider or OpenAI URL
+LLM_API_KEY=lm-studio                       # API Key (use "lm-studio" for local dev, or OpenAI Key)
+LLM_CHAT_MODEL=your-chat-model-name         # Model ID to use for chat, roadmaps, and proposals
+
+# Embedding Model Settings
+EMBED_BASE_URL=http://localhost:1234/v1     # Endpoint of embedding provider
+EMBED_API_KEY=lm-studio                     # API Key for embedding service
+EMBED_MODEL=your-embed-model-name           # Embedding Model ID
+EMBED_DIMENSION=768                         # Match the dimension size of the embedding model
+
+# === Neo4j Graph Settings ===
+NEO4J_URI=bolt://localhost:7687
+NEO4J_USER=neo4j
+NEO4J_PASSWORD=pathfinder123
+
+# === Qdrant Vector Settings ===
+QDRANT_HOST=localhost
+QDRANT_PORT=6333
+QDRANT_GRPC_PORT=6334
+
+# === Local Data Settings ===
+DATA_DIR=./Data
+TOP_N_RESULTS=10                            # Number of organization matches to return
+EMBED_BATCH_SIZE=32                         # Ingestion embedding batch sizes
 ```
 
 ---
@@ -97,7 +228,7 @@ GSoCPathfinder/
 - **Node.js 18+**
 - **Docker & Docker Compose**
 - **[uv](https://docs.astral.sh/uv/)** (Python environment manager)
-- **Rust toolchain** (for compiling the scoring engine)
+- **Rust toolchain** (to build the scoring engine)
 - **LM Studio** (running local chat/embedding models) or an **OpenAI API Key**
 
 ### 1. Database & Environment Setup
