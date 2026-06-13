@@ -57,7 +57,7 @@ const CVInput = ({ onResults }) => {
           </Typography>
         )}
 
-        <Box display="flex" justifyContent="center">
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
           <Button
             type="submit"
             variant="contained"

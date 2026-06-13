@@ -79,17 +79,17 @@ const OrgCard = ({ org, cvText }) => {
   return (
     <Card sx={{ display: 'flex', flexDirection: 'column', height: '100%' }} elevation={1}>
       <CardContent sx={{ flexGrow: 1, p: 3 }}>
-        <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={3}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 3 }}>
           <Box>
-            <Typography variant="h5" component="h3" fontWeight="bold">
+            <Typography variant="h5" component="h3" sx={{ fontWeight: 'bold' }}>
               {org.canonical_name}
             </Typography>
             <Typography variant="subtitle2" color="text.secondary">
               {org.category}
             </Typography>
           </Box>
-          <Box bgcolor="primary.main" color="primary.contrastText" px={1.5} py={0.5} borderRadius={1}>
-            <Typography variant="subtitle1" fontWeight="bold">{totalScore}% Match</Typography>
+          <Box sx={{ bgcolor: 'primary.main', color: 'primary.contrastText', px: 1.5, py: 0.5, borderRadius: 1 }}>
+            <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>{totalScore}% Match</Typography>
           </Box>
         </Box>
 
@@ -99,11 +99,11 @@ const OrgCard = ({ org, cvText }) => {
           </Typography>
         )}
 
-        <Box mb={2}>
+        <Box sx={{ mb: 2 }}>
           {org.matched_technologies?.length > 0 && (
-            <Box mb={1}>
-              <Typography variant="caption" color="text.secondary" display="block" mb={0.5}>Matched Skills</Typography>
-              <Box display="flex" flexWrap="wrap" gap={0.5}>
+            <Box sx={{ mb: 1.5 }}>
+              <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>Matched Skills</Typography>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                 {org.matched_technologies.map((tech, idx) => (
                   <Chip key={idx} label={tech} size="small" color="success" variant="outlined" />
                 ))}
@@ -112,9 +112,9 @@ const OrgCard = ({ org, cvText }) => {
           )}
 
           {org.matched_topics?.length > 0 && (
-            <Box>
-              <Typography variant="caption" color="text.secondary" display="block" mb={0.5}>Matched Topics</Typography>
-              <Box display="flex" flexWrap="wrap" gap={0.5}>
+            <Box sx={{ mt: 1.5 }}>
+              <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>Matched Topics</Typography>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                 {org.matched_topics.map((topic, idx) => (
                   <Chip key={idx} label={topic} size="small" color="warning" variant="outlined" />
                 ))}
@@ -124,14 +124,14 @@ const OrgCard = ({ org, cvText }) => {
         </Box>
 
         {org.explanation && (
-          <Box bgcolor="grey.100" p={2} borderRadius={1} mt={2}>
+          <Box sx={{ bgcolor: 'grey.100', p: 2, borderRadius: 1, mt: 2 }}>
             <Typography variant="body2" fontStyle="italic">"{org.explanation}"</Typography>
           </Box>
         )}
 
         {issues && issues.length > 0 && (
-          <Box mt={3} p={2} bgcolor="grey.50" borderRadius={1} border="1px solid" borderColor="grey.200">
-            <Typography variant="subtitle2" fontWeight="bold" mb={1} display="flex" alignItems="center">
+          <Box sx={{ mt: 3, p: 2, bgcolor: 'grey.50', borderRadius: 1, border: '1px solid', borderColor: 'grey.200' }}>
+            <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 1, display: 'flex', alignItems: 'center' }}>
               <BugReportIcon fontSize="small" sx={{ mr: 1 }} /> Good First Issues
             </Typography>
             <ul style={{ paddingLeft: '1.2rem', margin: 0 }}>
@@ -140,7 +140,7 @@ const OrgCard = ({ org, cvText }) => {
                   <Typography variant="body2" component="a" href={issue.url} target="_blank" sx={{ textDecoration: 'none', color: 'primary.main', '&:hover': { textDecoration: 'underline' } }}>
                     #{issue.number} {issue.title}
                   </Typography>
-                  <Box mt={0.5}>
+                  <Box sx={{ mt: 0.5 }}>
                     {issue.labels.map((l, i) => (
                       <Chip key={i} label={l} size="small" sx={{ height: 20, fontSize: '0.65rem', mr: 0.5 }} />
                     ))}

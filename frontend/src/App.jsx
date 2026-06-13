@@ -106,23 +106,23 @@ function App() {
 
       <Container maxWidth="lg" sx={{ py: 6 }}>
         {!results ? (
-          <Box display="flex" flexDirection="column" alignItems="center">
+          <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}>
             <Typography
               variant="h4"
               component="h1"
               gutterBottom
-              textAlign="center"
-              fontWeight="bold"
+              sx={{ textAlign: "center", fontWeight: "bold" }}
             >
               Find Your Ideal GSoC Organization
             </Typography>
             <Typography
               variant="subtitle1"
               color="text.secondary"
-              textAlign="center"
-              mb={6}
-              pb={6}
-              maxWidth="600px"
+              sx={{
+                textAlign: "center",
+                mb: 4,
+                maxWidth: "600px",
+              }}
             >
               Paste your CV or resume below. Our AI matching engine will analyze
               your skills and find the best open-source organizations for you.

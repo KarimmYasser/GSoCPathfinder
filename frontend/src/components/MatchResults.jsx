@@ -11,8 +11,8 @@ const MatchResults = ({ results, onReset }) => {
 
   return (
     <Box>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
-        <Typography variant="h4" component="h2" fontWeight="bold">
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+        <Typography variant="h4" component="h2" sx={{ fontWeight: 'bold' }}>
           Your Top Matches
         </Typography>
         <Button variant="outlined" onClick={onReset} startIcon={<ReplayIcon />}>
@@ -21,7 +21,7 @@ const MatchResults = ({ results, onReset }) => {
       </Box>
 
       <Paper elevation={2} sx={{ p: 3, mb: 4, borderRadius: 3, bgcolor: 'primary.light', color: 'primary.contrastText' }}>
-        <Typography variant="h6" gutterBottom fontWeight="bold">Your Profile Analysis</Typography>
+        <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>Your Profile Analysis</Typography>
         <Typography variant="body1">
           {user_profile.summary}
         </Typography>
