@@ -258,6 +258,20 @@ Format your output exactly as follows (use these headers):
     # Re-sort just in case Factor 7 changed the top order
     orgs.sort(key=lambda x: x.score.total, reverse=True)
     
+    # Scale total score to have a more distributed range [0, 1] instead of compression below 0.70
+    def scale_score(score: float) -> float:
+        if score <= 0.30:
+            return score * 0.5
+        elif score <= 0.50:
+            return 0.15 + (score - 0.30) * 2.25
+        elif score <= 0.70:
+            return 0.60 + (score - 0.50) * 1.5
+        else:
+            return 0.90 + (score - 0.70) * 0.3
+
+    for org in orgs:
+        org.score.total = round(scale_score(org.score.total), 4)
+
     # Update ranks
     for i, org in enumerate(orgs):
         org.rank = i + 1

@@ -51,6 +51,16 @@ const OrgCard = ({ org, cvText }) => {
     ? Math.round(org.score.total * 100)
     : Math.round(org.score * 100) || 0;
 
+  const getScoreStyles = (score) => {
+    if (score >= 80) {
+      return { bgcolor: '#2e7d32', color: '#ffffff' }; // Google Green / Success
+    } else if (score >= 60) {
+      return { bgcolor: '#ed6c02', color: '#ffffff' }; // Orange / Warning
+    } else {
+      return { bgcolor: '#d32f2f', color: '#ffffff' }; // Google Red / Error
+    }
+  };
+
   const fetchIssues = async () => {
     setLoadingIssues(true);
     try {
@@ -123,7 +133,7 @@ const OrgCard = ({ org, cvText }) => {
               {org.category}
             </Typography>
           </Box>
-          <Box sx={{ bgcolor: 'primary.main', color: 'primary.contrastText', px: 1.5, py: 0.5, borderRadius: 1 }}>
+          <Box sx={{ ...getScoreStyles(totalScore), px: 1.5, py: 0.5, borderRadius: 1 }}>
             <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>{totalScore}% Match</Typography>
           </Box>
         </Box>

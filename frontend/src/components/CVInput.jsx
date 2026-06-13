@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Paper,
   TextField,
@@ -19,6 +19,14 @@ const CVInput = ({ onResults }) => {
   const [error, setError] = useState("");
   const [statusMessages, setStatusMessages] = useState([]);
   const [currentStatus, setCurrentStatus] = useState("");
+
+  const logContainerRef = useRef(null);
+
+  useEffect(() => {
+    if (logContainerRef.current) {
+      logContainerRef.current.scrollTop = logContainerRef.current.scrollHeight;
+    }
+  }, [statusMessages, currentStatus]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -126,6 +134,7 @@ const CVInput = ({ onResults }) => {
               Execution Activity Log
             </Typography>
             <Box
+              ref={logContainerRef}
               sx={{
                 bgcolor: "#1e1e1e",
                 color: "#d4d4d4",
