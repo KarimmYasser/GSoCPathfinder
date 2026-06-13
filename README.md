@@ -61,12 +61,12 @@ Organizations are ranked using 7 weighted factors:
 | Factor | Weight | Description |
 |---|---|---|
 | Skill Overlap | 25% | Jaccard similarity: your skills vs org's tech stack |
-| Semantic Similarity | 20% | Embedding cosine similarity: your CV vs org profile |
-| Recency + Frequency | 20% | How recently and consistently the org participates |
+| Semantic Similarity | 15% | Embedding cosine similarity: your CV vs org profile |
+| Recency + Frequency | 15% | How recently and consistently the org participates |
 | Topic Alignment | 10% | Match between your interests and org's focus areas |
 | Project Volume | 10% | Average projects per year (more slots = better odds) |
 | Org Stability | 10% | Longevity, consistency, recent activity |
-| LLM Relevance | 5% | AI-generated relevance assessment |
+| LLM Relevance | 15% | AI-generated relevance assessment |
 
 All weights are configurable in `src/config/weights.yaml`.
 

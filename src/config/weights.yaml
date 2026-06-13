@@ -4,12 +4,12 @@
 
 weights:
   skill_overlap: 0.25        # f1: Jaccard similarity between CV skills and org technologies
-  semantic_similarity: 0.20  # f2: Cosine similarity of CV embedding vs org profile embedding
-  recency_frequency: 0.20   # f3: How recently and frequently the org participates in GSoC
+  semantic_similarity: 0.15  # f2: Cosine similarity of CV embedding vs org profile embedding
+  recency_frequency: 0.15   # f3: How recently and frequently the org participates in GSoC
   topic_alignment: 0.10     # f4: Jaccard similarity between CV interests and org topics
   project_volume: 0.10      # f5: Average number of projects per year (normalized)
   org_stability: 0.10       # f6: Composite stability score (total projects, longevity, recent activity)
-  llm_relevance: 0.05       # f7: LLM-generated relevance score (support signal only)
+  llm_relevance: 0.15       # f7: LLM-generated relevance score (support signal only)
 
 # Recency sub-weights (used within f3 calculation)
 recency:
