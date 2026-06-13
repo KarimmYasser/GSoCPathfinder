@@ -258,19 +258,25 @@ Format your output exactly as follows (use these headers):
     # Re-sort just in case Factor 7 changed the top order
     orgs.sort(key=lambda x: x.score.total, reverse=True)
     
-    # Scale total score to have a more distributed range [0, 1] instead of compression below 0.70
-    def scale_score(score: float) -> float:
-        if score <= 0.30:
-            return score * 0.5
-        elif score <= 0.50:
-            return 0.15 + (score - 0.30) * 2.25
-        elif score <= 0.70:
-            return 0.60 + (score - 0.50) * 1.5
-        else:
-            return 0.90 + (score - 0.70) * 0.3
+    # --- Adaptive Score Normalization ---
+    # Min-max normalize across the full batch so that:
+    #   • top match    → TARGET_MAX (~0.95)
+    #   • lowest match → TARGET_MIN (~0.45)
+    #   • everything in between is proportionally distributed
+    # This is self-adapting — works regardless of raw score range.
+    TARGET_MIN = 0.45
+    TARGET_MAX = 0.95
+
+    raw_scores = [org.score.total for org in orgs]
+    s_min, s_max = min(raw_scores), max(raw_scores)
 
     for org in orgs:
-        org.score.total = round(scale_score(org.score.total), 4)
+        if s_max == s_min:
+            # All orgs have identical scores → spread evenly at midpoint
+            org.score.total = round((TARGET_MIN + TARGET_MAX) / 2, 4)
+        else:
+            normalized = (org.score.total - s_min) / (s_max - s_min)
+            org.score.total = round(TARGET_MIN + normalized * (TARGET_MAX - TARGET_MIN), 4)
 
     # Update ranks
     for i, org in enumerate(orgs):
