@@ -258,13 +258,13 @@ Format your output exactly as follows (use these headers):
     # Re-sort just in case Factor 7 changed the top order
     orgs.sort(key=lambda x: x.score.total, reverse=True)
     
-    # --- Pure Min-Max Normalization using global score range ---
-    # global_score_min/max come from merger.py and represent the score range
-    # across ALL evaluated orgs (not just this top-N batch).
-    # This gives honest scores: e.g. 10th place isn't 0% just because it's last
-    # in the batch — it's scored relative to every org that was evaluated.
+    # --- Min-Max Normalization ---
+    # Floor  = global_score_min from merger (min score across ALL evaluated orgs)
+    # Ceiling = max score in this batch AFTER llm_relevance has been added
+    #           (must be recomputed here — merger's global_score_max is pre-LLM
+    #            so adding llm_relevance can push totals above it, causing >100%)
     g_min = state.get("global_score_min", 0.0)
-    g_max = state.get("global_score_max", 1.0)
+    g_max = max(org.score.total for org in orgs)  # post-LLM ceiling
 
     for org in orgs:
         if g_max == g_min:

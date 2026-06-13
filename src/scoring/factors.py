@@ -19,23 +19,25 @@ class ScoringFactors:
         except ImportError:
             cv_set = set(s.lower() for s in user_skills)
             org_set = set(t.lower() for t in org_technologies)
-            
+
             if not cv_set or not org_set:
                 return 0.0
-                
+
             raw_text_lower = raw_cv_text.lower()
-            
-            def get_weight(skill: str) -> int:
+
+            def get_weight(skill: str) -> float:
                 count = raw_text_lower.count(skill)
                 return max(1, count)
-                
+
             intersection = cv_set.intersection(org_set)
-            union = cv_set.union(org_set)
-            
-            intersection_weight = sum(get_weight(s) for s in intersection)
-            union_weight = sum(get_weight(s) if s in cv_set else 1 for s in union)
-            
-            return intersection_weight / union_weight if union_weight > 0 else 0.0
+
+            # User-centric precision: what fraction of MY skills does this org cover?
+            # Weighted by how prominently each skill appears in the CV.
+            # This avoids penalizing orgs that have a broader tech stack (Jaccard's flaw).
+            matched_weight = sum(get_weight(s) for s in intersection)
+            total_cv_weight = sum(get_weight(s) for s in cv_set)
+
+            return matched_weight / total_cv_weight if total_cv_weight > 0 else 0.0
 
     @staticmethod
     def f2_semantic_similarity(qdrant_score: float) -> float:
