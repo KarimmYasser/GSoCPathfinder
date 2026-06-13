@@ -258,25 +258,19 @@ Format your output exactly as follows (use these headers):
     # Re-sort just in case Factor 7 changed the top order
     orgs.sort(key=lambda x: x.score.total, reverse=True)
     
-    # --- Adaptive Score Normalization ---
-    # Min-max normalize across the full batch so that:
-    #   • top match    → TARGET_MAX (~0.95)
-    #   • lowest match → TARGET_MIN (~0.45)
-    #   • everything in between is proportionally distributed
-    # This is self-adapting — works regardless of raw score range.
-    TARGET_MIN = 0.45
-    TARGET_MAX = 0.95
-
-    raw_scores = [org.score.total for org in orgs]
-    s_min, s_max = min(raw_scores), max(raw_scores)
+    # --- Pure Min-Max Normalization using global score range ---
+    # global_score_min/max come from merger.py and represent the score range
+    # across ALL evaluated orgs (not just this top-N batch).
+    # This gives honest scores: e.g. 10th place isn't 0% just because it's last
+    # in the batch — it's scored relative to every org that was evaluated.
+    g_min = state.get("global_score_min", 0.0)
+    g_max = state.get("global_score_max", 1.0)
 
     for org in orgs:
-        if s_max == s_min:
-            # All orgs have identical scores → spread evenly at midpoint
-            org.score.total = round((TARGET_MIN + TARGET_MAX) / 2, 4)
+        if g_max == g_min:
+            org.score.total = round(1.0, 4)
         else:
-            normalized = (org.score.total - s_min) / (s_max - s_min)
-            org.score.total = round(TARGET_MIN + normalized * (TARGET_MAX - TARGET_MIN), 4)
+            org.score.total = round((org.score.total - g_min) / (g_max - g_min), 4)
 
     # Update ranks
     for i, org in enumerate(orgs):

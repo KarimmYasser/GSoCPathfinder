@@ -20,4 +20,6 @@ class AgentState(TypedDict):
     
     # Final Output
     ranked_organizations: list[RankedOrganization]
+    global_score_min: float  # Min score across ALL evaluated orgs (not just top-N)
+    global_score_max: float  # Max score across ALL evaluated orgs
     match_result: dict | None # The final MatchResult serialized

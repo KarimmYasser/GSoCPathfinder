@@ -39,4 +39,10 @@ async def merger_node(state: AgentState, config: RunnableConfig = None) -> dict:
     if callback:
         await callback("info", f"Signal merging complete. Ranked {len(ranked_orgs)} total organizations. Evaluating top {len(top_orgs)} matches.")
     
-    return {"ranked_organizations": top_orgs}
+    all_scores = [o.score.total for o in ranked_orgs]
+    
+    return {
+        "ranked_organizations": top_orgs,
+        "global_score_min": min(all_scores),
+        "global_score_max": max(all_scores),
+    }
