@@ -36,9 +36,22 @@ async def get_knowledge_graph(skills: List[str], org_names: List[str]) -> Dict[s
         
     # 2. Query Neo4j for Orgs and their Technologies
     query = """
-    MATCH (o:Organization)-[:USES]->(t:Technology)
+    MATCH (o:Organization)
     WHERE o.canonical_name IN $org_names
-    RETURN o.canonical_name AS org_name, collect(t.name) AS technologies
+
+    OPTIONAL MATCH (o)-[:HAS_PROFILE]->(:OrgProfile)-[:USES]->(ot:Technology)
+    OPTIONAL MATCH (o)-[:OFFERS]->(:Project)-[:USES]->(pt:Technology)
+
+    WITH o, collect(DISTINCT ot.name) + collect(DISTINCT pt.name) AS techs
+    UNWIND techs AS tech
+
+    WITH o, collect(DISTINCT tech) AS technologies
+
+    RETURN
+        o.canonical_name AS org_name,
+        [t IN technologies WHERE t IS NOT NULL] AS technologies,
+        size([t IN technologies WHERE t IS NOT NULL]) AS technology_count
+    ORDER BY technology_count DESC
     """
     
     records = await client.execute_query(query, {"org_names": org_names})
