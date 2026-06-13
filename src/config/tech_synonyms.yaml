@@ -1,0 +1,67 @@
+# GSoC Pathfinder — Technology Synonym Normalization Map
+# Maps variant technology names to their canonical form.
+# During ingestion, all tech strings are looked up here before storage.
+# If a tech string is not in this map, it is stored as-is (lowercased).
+
+# Special entries with "split_into" map a single string to MULTIPLE canonical names.
+
+synonyms:
+  # C family
+  "c language": "c"
+  "c programming": "c"
+  # c/c++ is special — splits into two
+
+  # Go
+  "golang": "go"
+
+  # Node
+  "nodejs": "node.js"
+  "node": "node.js"
+
+  # JavaScript
+  "js": "javascript"
+
+  # TypeScript
+  "ts": "typescript"
+
+  # React
+  "reactjs": "react"
+  "react.js": "react"
+
+  # Vue
+  "vuejs": "vue.js"
+  "vue": "vue.js"
+
+  # Angular
+  "angularjs": "angular"
+  "angular.js": "angular"
+
+  # ML/AI
+  "ml": "machine learning"
+  "dl": "deep learning"
+  "nlp": "natural language processing"
+  "tf": "tensorflow"
+
+  # Infrastructure
+  "k8s": "kubernetes"
+  "postgres": "postgresql"
+  "mongo": "mongodb"
+
+  # Ruby
+  "rails": "ruby on rails"
+  "ror": "ruby on rails"
+
+  # REST
+  "rest api": "rest"
+  "web services": "rest"
+
+  # Shell
+  "bash": "shell"
+  "shell script": "shell"
+  "shell scripting": "shell"
+
+# Multi-mapping: these tech strings should be split into multiple canonical names
+split_mappings:
+  "c/c++": ["c", "c++"]
+  "html/css": ["html", "css"]
+  "html5/css3": ["html", "css"]

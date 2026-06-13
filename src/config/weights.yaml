@@ -1,0 +1,23 @@
+# GSoC Pathfinder — Scoring Weights Configuration
+# All weights must sum to 1.0
+# Adjust these to change how organizations are ranked for a user's CV.
+
+weights:
+  skill_overlap: 0.25        # f1: Jaccard similarity between CV skills and org technologies
+  semantic_similarity: 0.20  # f2: Cosine similarity of CV embedding vs org profile embedding
+  recency_frequency: 0.20   # f3: How recently and frequently the org participates in GSoC
+  topic_alignment: 0.10     # f4: Jaccard similarity between CV interests and org topics
+  project_volume: 0.10      # f5: Average number of projects per year (normalized)
+  org_stability: 0.10       # f6: Composite stability score (total projects, longevity, recent activity)
+  llm_relevance: 0.05       # f7: LLM-generated relevance score (support signal only)
+
+# Recency sub-weights (used within f3 calculation)
+recency:
+  recency_weight: 0.85      # Up from 0.6: Heavily favor recent activity
+  consistency_weight: 0.15  # Down from 0.4: Reduce reliance on total years
+
+# Stability sub-parameters (used within f6 calculation)
+stability:
+  avg_project_cap: 10.0     # Avg projects/year above this caps at 1.0
+  recent_window: 3          # Number of recent years to check for "active" status
+  inactive_penalty: 0.75    # Up from 0.2: Heavy penalty for no recent activity
