@@ -268,9 +268,17 @@ npm run dev
 
 Visit the dashboard in your browser at `http://localhost:5173`. Paste your CV, generate matches, explore the Knowledge Graph connections, optimization roadmap, beginner GitHub issues, and chat about your opportunities!
 
+## 💡 Implementation Notes
+
+* **Checking Recent Changes:** To see the exact code modifications made to the scoring engine, dynamic UI color coding, or auto-scrolling log features, use `git log`:
+  ```bash
+  git log -p -n 1
+  ```
+
 ---
 
 ## 📄 License
 
 MIT
+
 
