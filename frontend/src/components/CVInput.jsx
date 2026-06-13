@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { Paper, TextField, Button, Typography, CircularProgress, Box } from '@mui/material';
+import { Paper, TextField, Button, Typography, CircularProgress, Box, FormControlLabel, Switch } from '@mui/material';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 
 const CVInput = ({ onResults }) => {
   const [cvText, setCvText] = useState('');
+  const [advanced, setAdvanced] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -20,7 +21,7 @@ const CVInput = ({ onResults }) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ cv_text: cvText }),
+        body: JSON.stringify({ cv_text: cvText, advanced: advanced }),
       });
 
       if (!response.ok) {
@@ -48,8 +49,26 @@ const CVInput = ({ onResults }) => {
           value={cvText}
           onChange={(e) => setCvText(e.target.value)}
           disabled={loading}
-          sx={{ mb: 3 }}
+          sx={{ mb: 2 }}
         />
+        
+        <Box sx={{ mb: 2, textAlign: 'left' }}>
+          <FormControlLabel
+            control={
+              <Switch
+                checked={advanced}
+                onChange={(e) => setAdvanced(e.target.checked)}
+                color="primary"
+                disabled={loading}
+              />
+            }
+            label={
+              <Typography variant="body2" sx={{ fontFamily: "'Roboto Mono', monospace", color: 'text.secondary' }}>
+                Deep Reasoning Mode (Local LLM Intensive)
+              </Typography>
+            }
+          />
+        </Box>
         
         {error && (
           <Typography color="error" variant="body2" sx={{ mb: 2 }}>

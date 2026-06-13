@@ -37,6 +37,7 @@ app.add_middleware(
 
 class MatchRequest(BaseModel):
     cv_text: str
+    advanced: bool = False
 
 @app.post("/api/match")
 async def match_cv(request: MatchRequest) -> Dict[str, Any]:
@@ -44,7 +45,7 @@ async def match_cv(request: MatchRequest) -> Dict[str, Any]:
     if not request.cv_text or not request.cv_text.strip():
         raise HTTPException(status_code=400, detail="CV text cannot be empty.")
 
-    logger.info("Received matching request for CV (length: %d)", len(request.cv_text))
+    logger.info("Received matching request for CV (length: %d, advanced: %s)", len(request.cv_text), request.advanced)
     
     try:
         # Create and invoke the workflow
@@ -53,6 +54,7 @@ async def match_cv(request: MatchRequest) -> Dict[str, Any]:
         # Initialize state exactly matching AgentState
         initial_state = AgentState(
             raw_cv_text=request.cv_text,
+            advanced=request.advanced,
             user_profile=None,
             graph_results=[],
             vector_results=[],
