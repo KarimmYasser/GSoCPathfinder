@@ -174,7 +174,7 @@ const OrgCard = ({ org, cvText }) => {
             return (
               <Box sx={{ mt: 2, display: 'flex', flexDirection: 'column', gap: 1, textAlign: 'left' }}>
                 {parsed.justification && (
-                  <Box sx={{ bgcolor: 'grey.50', p: 2, borderRadius: 2, borderLeft: '4px solid #1a73e8' }}>
+                  <Box sx={{ bgcolor: 'action.hover', p: 2, borderRadius: 2, borderLeft: '4px solid #1a73e8' }}>
                     <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: 'primary.main', mb: 0.5, fontFamily: "'Roboto Mono', monospace" }}>
                       Match Justification
                     </Typography>
@@ -240,7 +240,7 @@ const OrgCard = ({ org, cvText }) => {
           }
           
           return org.explanation ? (
-            <Box sx={{ bgcolor: 'grey.100', p: 2, borderRadius: 1, mt: 2, textAlign: 'left' }}>
+            <Box sx={{ bgcolor: 'action.hover', p: 2, borderRadius: 1, mt: 2, textAlign: 'left' }}>
               <Typography variant="body2" fontStyle="italic" sx={{ fontFamily: "'Roboto Mono', monospace" }}>
                 "{org.explanation}"
               </Typography>
@@ -249,7 +249,7 @@ const OrgCard = ({ org, cvText }) => {
         })()}
 
         {issues && issues.length > 0 && (
-          <Box sx={{ mt: 3, p: 2, bgcolor: 'grey.50', borderRadius: 1, border: '1px solid', borderColor: 'grey.200' }}>
+          <Box sx={{ mt: 3, p: 2, bgcolor: 'action.hover', borderRadius: 1, border: '1px solid', borderColor: 'divider' }}>
             <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 1, display: 'flex', alignItems: 'center' }}>
               <BugReportIcon fontSize="small" sx={{ mr: 1 }} /> Good First Issues
             </Typography>
