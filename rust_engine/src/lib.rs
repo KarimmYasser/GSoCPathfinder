@@ -54,3 +54,35 @@ fn pathfinder_rs(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(f1_skill_overlap, m)?)?;
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_f1_skill_overlap_empty() {
+        assert_eq!(f1_skill_overlap(vec![], vec!["python".to_string()], "".to_string()), 0.0);
+    }
+
+    #[test]
+    fn test_f1_skill_overlap_exact() {
+        assert_eq!(
+            f1_skill_overlap(
+                vec!["python".to_string(), "rust".to_string()],
+                vec!["python".to_string(), "rust".to_string()],
+                "".to_string()
+            ),
+            1.0
+        );
+    }
+
+    #[test]
+    fn test_f1_skill_overlap_weighted() {
+        let score = f1_skill_overlap(
+            vec!["python".to_string(), "rust".to_string()],
+            vec!["python".to_string(), "go".to_string()],
+            "I love Python. Python is great.".to_string(),
+        );
+        assert_eq!(score, 0.5);
+    }
+}
