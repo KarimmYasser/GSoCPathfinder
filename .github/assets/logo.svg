@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 150" width="100%" height="100%">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 555 170" width="100%" height="100%">
   <defs>
     <!-- Gradients -->
     <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -31,13 +31,13 @@
     }
     .text-bold {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
-      font-size: 38px;
+      font-size: 40px;
       font-weight: 800;
       fill: #4285F4;
     }
     .text-light {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
-      font-size: 38px;
+      font-size: 40px;
       font-weight: 300;
       fill: #24292f;
     }
@@ -52,55 +52,55 @@
     }
   </style>
 
-  <!-- Container Box / Card -->
-  <rect class="card-bg" x="10" y="10" width="500" height="130" rx="18" />
+  <!-- Container Box / Card with generous padding -->
+  <rect class="card-bg" x="15" y="15" width="525" height="140" rx="22" />
 
   <!-- Background Glow behind the compass -->
-  <circle cx="90" cy="75" r="55" fill="url(#glow)" />
+  <circle cx="110" cy="85" r="55" fill="url(#glow)" />
 
   <!-- Graph Network Nodes & Connections (Outer Compass Ring) -->
   <g stroke="#80868b" stroke-width="1.2" opacity="0.35" stroke-dasharray="3 3">
-    <circle cx="90" cy="75" r="50" fill="none" />
+    <circle cx="110" cy="85" r="45" fill="none" />
   </g>
   
   <!-- Network Paths -->
-  <path d="M 58,75 L 90,43 L 122,75 L 90,107 Z" fill="none" stroke="#80868b" stroke-width="0.8" opacity="0.25" />
-  <path d="M 90,25 L 90,125 M 40,75 L 140,75" fill="none" stroke="#80868b" stroke-width="0.8" opacity="0.15" />
+  <path d="M 78,85 L 110,53 L 142,85 L 110,117 Z" fill="none" stroke="#80868b" stroke-width="0.8" opacity="0.25" />
+  <path d="M 110,35 L 110,135 M 65,85 L 155,85" fill="none" stroke="#80868b" stroke-width="0.8" opacity="0.15" />
 
   <!-- Graph Nodes -->
-  <circle cx="90" cy="25" r="4" fill="#EA4335" />
-  <circle cx="140" cy="75" r="4" fill="#FBBC05" />
-  <circle cx="90" cy="125" r="4" fill="#34A853" />
-  <circle cx="40" cy="75" r="4" fill="#4285F4" />
-  <circle cx="55" cy="40" r="3" fill="#4285F4" opacity="0.6" />
-  <circle cx="125" cy="40" r="3" fill="#EA4335" opacity="0.6" />
-  <circle cx="125" cy="110" r="3" fill="#FBBC05" opacity="0.6" />
-  <circle cx="55" cy="110" r="3" fill="#34A853" opacity="0.6" />
+  <circle cx="110" cy="35" r="4" fill="#EA4335" />
+  <circle cx="155" cy="85" r="4" fill="#FBBC05" />
+  <circle cx="110" cy="135" r="4" fill="#34A853" />
+  <circle cx="65" cy="85" r="4" fill="#4285F4" />
+  <circle cx="78" cy="53" r="3" fill="#4285F4" opacity="0.6" />
+  <circle cx="142" cy="53" r="3" fill="#EA4335" opacity="0.6" />
+  <circle cx="142" cy="117" r="3" fill="#FBBC05" opacity="0.6" />
+  <circle cx="78" cy="117" r="3" fill="#34A853" opacity="0.6" />
 
   <!-- Compass Dial Highlights -->
-  <circle cx="90" cy="75" r="40" fill="none" stroke="#80868b" stroke-width="0.8" opacity="0.15" />
+  <circle cx="110" cy="85" r="35" fill="none" stroke="#80868b" stroke-width="0.8" opacity="0.15" />
 
   <!-- Center Stylized Compass Needle (Rotated 45 deg to point Northeast) -->
-  <g transform="rotate(45 90 75)">
+  <g transform="rotate(45 110 85)">
     <!-- North Pointer (Blue / Red) -->
-    <path d="M 90,36 L 100,75 L 90,68 Z" fill="url(#blueGrad)" />
-    <path d="M 90,36 L 80,75 L 90,68 Z" fill="url(#redGrad)" />
+    <path d="M 110,48 L 119,85 L 110,79 Z" fill="url(#blueGrad)" />
+    <path d="M 110,48 L 101,85 L 110,79 Z" fill="url(#redGrad)" />
     
     <!-- South Pointer (Yellow / Green) -->
-    <path d="M 90,114 L 100,75 L 90,82 Z" fill="url(#yellowGrad)" />
-    <path d="M 90,114 L 80,75 L 90,82 Z" fill="url(#greenGrad)" />
+    <path d="M 110,122 L 119,85 L 110,91 Z" fill="url(#yellowGrad)" />
+    <path d="M 110,122 L 101,85 L 110,91 Z" fill="url(#greenGrad)" />
     
     <!-- Needle shadows / dimension -->
-    <path d="M 90,36 L 90,68 L 100,75 Z" fill="#000" opacity="0.06" />
-    <path d="M 90,114 L 90,82 L 80,75 Z" fill="#000" opacity="0.06" />
+    <path d="M 110,48 L 110,79 L 119,85 Z" fill="#000" opacity="0.06" />
+    <path d="M 110,122 L 110,91 L 101,85 Z" fill="#000" opacity="0.06" />
   </g>
 
   <!-- Central Pivot -->
-  <circle cx="90" cy="75" r="7" fill="#ffffff" />
-  <circle cx="90" cy="75" r="4" fill="#4285F4" />
+  <circle cx="110" cy="85" r="7" fill="#ffffff" />
+  <circle cx="110" cy="85" r="4" fill="#4285F4" />
 
-  <!-- Header Text Group (with spacing in the middle) -->
-  <text x="180" y="88" class="text-main">
+  <!-- Header Text Group (with spacious separation) -->
+  <text x="220" y="98" class="text-main">
     <tspan class="text-bold">GSoC</tspan><tspan class="text-light">Pathfinder</tspan>
   </text>
 </svg>
