@@ -3,10 +3,8 @@
 from __future__ import annotations
 
 import hashlib
-from typing import Optional
 
 from pydantic import BaseModel, Field, computed_field
-
 
 # === Raw Data Models (mirror the JSON schema) ===
 
@@ -18,8 +16,8 @@ class RawProject(BaseModel):
     short_description: str = ""
     description: str = ""
     student_name: str = ""
-    code_url: Optional[str] = None
-    proposal_id: Optional[str] = None
+    code_url: str | None = None
+    proposal_id: str | None = None
     project_url: str = ""
 
 
@@ -33,8 +31,8 @@ class RawOrganization(BaseModel):
     url: str = ""
     category: str = ""
     projects_url: str = ""
-    ideas_url: Optional[str] = None
-    guide_url: Optional[str] = None
+    ideas_url: str | None = None
+    guide_url: str | None = None
     topics: list[str] = Field(default_factory=list)
     technologies: list[str] = Field(default_factory=list)
     irc_channel: str = ""
@@ -42,7 +40,7 @@ class RawOrganization(BaseModel):
     mailing_list: str = ""
     twitter_url: str = ""
     blog_url: str = ""
-    facebook_url: Optional[str] = None
+    facebook_url: str | None = None
     num_projects: int = 0
     projects: list[RawProject] = Field(default_factory=list)
 
@@ -67,8 +65,8 @@ class NormalizedProject(BaseModel):
     description_raw: str = ""  # original (may have HTML)
     description_clean: str = ""  # HTML-stripped plain text
     student_name: str = ""
-    code_url: Optional[str] = None
-    proposal_id: Optional[str] = None
+    code_url: str | None = None
+    proposal_id: str | None = None
     project_url: str = ""
     year: int = 0
     org_canonical_name: str = ""
@@ -94,8 +92,8 @@ class NormalizedOrgYearProfile(BaseModel):
     category: str = ""
     image_url: str = ""
     projects_url: str = ""
-    ideas_url: Optional[str] = None
-    guide_url: Optional[str] = None
+    ideas_url: str | None = None
+    guide_url: str | None = None
     topics: list[str] = Field(default_factory=list)  # normalized
     technologies: list[str] = Field(default_factory=list)  # normalized
     num_projects: int = 0

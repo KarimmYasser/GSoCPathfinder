@@ -1,25 +1,29 @@
 """Data normalization to handle tech synonyms and org aliases."""
 
-import yaml
 from pathlib import Path
-from models import RawYearData, NormalizedProject, NormalizedOrgYearProfile, NormalizedOrganization
+
+import yaml
+
+from models import NormalizedOrgYearProfile, NormalizedProject, RawYearData
+
 
 def load_yaml_config(filepath: Path | str) -> dict:
     """Load a YAML configuration file."""
     path = Path(filepath)
     if not path.exists():
         return {}
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         return yaml.safe_load(f) or {}
+
 
 class DataNormalizer:
     """Normalizes raw data using alias and synonym maps."""
-    
+
     def __init__(self, config_dir: Path | str):
         self.config_dir = Path(config_dir)
         self.org_aliases = self._load_org_aliases()
         self.tech_synonyms, self.tech_splits = self._load_tech_synonyms()
-        
+
     def _load_org_aliases(self) -> dict[str, str]:
         """Load org aliases mapping any variant to its canonical name."""
         config = load_yaml_config(self.config_dir / "org_aliases.yaml")
@@ -37,11 +41,13 @@ class DataNormalizer:
         config = load_yaml_config(self.config_dir / "tech_synonyms.yaml")
         synonyms = config.get("synonyms", {})
         splits = config.get("split_mappings", {})
-        
+
         # Format: { "alias": "canonical" }
         synonym_map = {k.lower().strip(): v.lower().strip() for k, v in synonyms.items()}
-        split_map = {k.lower().strip(): [v_item.lower().strip() for v_item in v] for k, v in splits.items()}
-        
+        split_map = {
+            k.lower().strip(): [v_item.lower().strip() for v_item in v] for k, v in splits.items()
+        }
+
         return synonym_map, split_map
 
     def get_canonical_org_name(self, raw_name: str) -> str:
@@ -57,14 +63,14 @@ class DataNormalizer:
             tech = tech.lower().strip()
             if not tech:
                 continue
-                
+
             if tech in self.tech_splits:
                 normalized.update(self.tech_splits[tech])
             elif tech in self.tech_synonyms:
                 normalized.add(self.tech_synonyms[tech])
             else:
                 normalized.add(tech)
-                
+
         return sorted(list(normalized))
 
     def normalize_topics(self, raw_topics: list[str]) -> list[str]:
@@ -75,23 +81,29 @@ class DataNormalizer:
         """Process a year's raw data into normalized profiles and projects."""
         profiles = []
         year = raw_data.year
-        
+
         for raw_org in raw_data.organizations:
             canonical_name = self.get_canonical_org_name(raw_org.name)
             norm_techs = self.normalize_technologies(raw_org.technologies)
             norm_topics = self.normalize_topics(raw_org.topics)
-            
+
             # Extract contact channels
             channels = {}
-            if raw_org.irc_channel: channels["irc"] = raw_org.irc_channel
-            if raw_org.contact_email: channels["email"] = raw_org.contact_email
-            if raw_org.mailing_list: channels["mailing_list"] = raw_org.mailing_list
-            if raw_org.twitter_url: channels["twitter"] = raw_org.twitter_url
-            if raw_org.blog_url: channels["blog"] = raw_org.blog_url
-            if raw_org.facebook_url: channels["facebook"] = raw_org.facebook_url
-            
+            if raw_org.irc_channel:
+                channels["irc"] = raw_org.irc_channel
+            if raw_org.contact_email:
+                channels["email"] = raw_org.contact_email
+            if raw_org.mailing_list:
+                channels["mailing_list"] = raw_org.mailing_list
+            if raw_org.twitter_url:
+                channels["twitter"] = raw_org.twitter_url
+            if raw_org.blog_url:
+                channels["blog"] = raw_org.blog_url
+            if raw_org.facebook_url:
+                channels["facebook"] = raw_org.facebook_url
+
             from ingestion.parser import clean_html
-            
+
             projects = []
             for raw_proj in raw_org.projects:
                 proj = NormalizedProject(
@@ -107,10 +119,10 @@ class DataNormalizer:
                     year=year,
                     org_canonical_name=canonical_name,
                     technologies=norm_techs,
-                    is_ongoing=(not raw_proj.code_url and year == 2026) # Or similar logic
+                    is_ongoing=(not raw_proj.code_url and year == 2026),  # Or similar logic
                 )
                 projects.append(proj)
-                
+
             profile = NormalizedOrgYearProfile(
                 id=NormalizedOrgYearProfile.generate_id(canonical_name, year),
                 canonical_name=canonical_name,
@@ -127,8 +139,8 @@ class DataNormalizer:
                 technologies=norm_techs,
                 num_projects=raw_org.num_projects,
                 contact_channels=channels,
-                projects=projects
+                projects=projects,
             )
             profiles.append(profile)
-            
+
         return profiles

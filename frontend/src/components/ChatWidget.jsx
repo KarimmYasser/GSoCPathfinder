@@ -103,7 +103,7 @@ const ChatWidget = ({ context }) => {
       } else {
         setMessages(prev => [...prev, { role: 'assistant', content: 'Sorry, I encountered an error. Please try again.' }]);
       }
-    } catch (err) {
+    } catch {
       setMessages(prev => [...prev, { role: 'assistant', content: 'Sorry, I encountered a network error. Please try again.' }]);
     } finally {
       setLoading(false);

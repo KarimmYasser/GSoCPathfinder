@@ -1,13 +1,12 @@
 """Application settings loaded from environment variables."""
 
-from enum import Enum
+from enum import StrEnum
 from pathlib import Path
 
-from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-class LLMProvider(str, Enum):
+class LLMProvider(StrEnum):
     """Supported LLM provider backends."""
 
     LOCAL = "local"

@@ -2,12 +2,13 @@
 
 from graph.client import Neo4jClient
 
+
 class GraphQueries:
     """Library of Cypher queries for the matching engine."""
-    
+
     def __init__(self, client: Neo4jClient):
         self.client = client
-        
+
     async def find_orgs_by_skills(self, skills: list[str], limit: int = 20) -> list[dict]:
         """Find organizations that use the given technologies."""
         query = """
@@ -26,7 +27,7 @@ class GraphQueries:
                matched_skills
         """
         return await self.client.execute_query(query, {"skills": skills, "limit": limit})
-        
+
     async def find_orgs_by_topics(self, topics: list[str], limit: int = 20) -> list[dict]:
         """Find organizations focused on specific topics."""
         query = """
@@ -45,7 +46,7 @@ class GraphQueries:
                matched_topics
         """
         return await self.client.execute_query(query, {"topics": topics, "limit": limit})
-        
+
     async def get_org_details(self, canonical_name: str) -> dict | None:
         """Get full details for an organization, including its most recent profile."""
         query = """

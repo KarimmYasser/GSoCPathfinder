@@ -1,4 +1,4 @@
-import React from 'react';
+/* eslint-disable react-refresh/only-export-components */
 import { Box, Typography, useTheme } from '@mui/material';
 
 // Internal helper: parses a single line of text into inline React elements
