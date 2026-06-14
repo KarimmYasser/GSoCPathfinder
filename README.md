@@ -1,6 +1,10 @@
-# GSoC Pathfinder 🧭
+<p align="center">
+  <img src=".github/assets/logo.svg" alt="GSoC Pathfinder Logo" width="400" />
+</p>
 
-**AI-powered Google Summer of Code organization matching engine, CV optimizer, and visualization dashboard.**
+<p align="center">
+  <b>AI-powered Google Summer of Code organization matching engine, CV optimizer, and visualization dashboard.</b>
+</p>
 
 <p align="center">
   <a href="https://github.com/KarimmYasser/GSoCPathfinder/actions/workflows/ci.yml">
