@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <b>AI Agent matching engine, CV optimizer, and visualization dashboard for Google Summer of Code.</b>
+  <b>AI Agent organization matcher for Google Summer of Code (GSoC).</b>
 </p>
 
 <p align="center">
@@ -21,7 +21,7 @@
   </a>
 </p>
 
-GSoC Pathfinder is a sophisticated AI Agent designed to help aspiring students find the best Google Summer of Code organizations for their profile. By leveraging a high-performance Rust scoring engine, a Neo4j knowledge graph, a Qdrant semantic vector database, and LangGraph-based agentic workflows, it maps out the GSoC ecosystem to match skills, analyze learning gaps, draft proposals, and visualize connections in real-time.
+GSoC Pathfinder is an AI Agent organization matcher for Google Summer of Code (GSoC). By leveraging a high-performance Rust scoring engine, a Neo4j knowledge graph, a Qdrant semantic vector database, and LangGraph-based agentic workflows, it maps out the GSoC ecosystem to match candidate profiles to the most suitable organizations, analyze skill gaps, draft proposals, and visualize connections in real-time.
 
 ---
 
