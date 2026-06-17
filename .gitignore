@@ -29,3 +29,6 @@ frontend/dist/
 .DS_Store
 Thumbs.db
 *.stackdump
+
+# Scratch files
+scratch

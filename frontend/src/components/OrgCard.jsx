@@ -47,6 +47,13 @@ const OrgCard = ({ org, cvText }) => {
   const [loadingProposal, setLoadingProposal] = useState(false);
   const [roadmap, setRoadmap] = useState(null);
   const [loadingRoadmap, setLoadingRoadmap] = useState(false);
+  const [copiedType, setCopiedType] = useState(null);
+
+  const handleCopy = (text, type) => {
+    navigator.clipboard.writeText(text);
+    setCopiedType(type);
+    setTimeout(() => setCopiedType(null), 2000);
+  };
 
   const totalScore = org.score && typeof org.score === 'object' && org.score.total !== undefined
     ? Math.round(org.score.total * 100)
@@ -304,8 +311,8 @@ const OrgCard = ({ org, cvText }) => {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setProposal(null)}>Close</Button>
-          <Button variant="contained" onClick={() => { navigator.clipboard.writeText(proposal); alert("Copied!"); }}>
-            Copy to Clipboard
+          <Button variant="contained" color={copiedType === 'proposal' ? 'success' : 'primary'} onClick={() => handleCopy(proposal, 'proposal')}>
+            {copiedType === 'proposal' ? 'Copied!' : 'Copy to Clipboard'}
           </Button>
         </DialogActions>
       </Dialog>
@@ -320,6 +327,9 @@ const OrgCard = ({ org, cvText }) => {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setRoadmap(null)}>Close</Button>
+          <Button variant="contained" color={copiedType === 'roadmap' ? 'success' : 'primary'} onClick={() => handleCopy(roadmap, 'roadmap')}>
+            {copiedType === 'roadmap' ? 'Copied!' : 'Copy to Clipboard'}
+          </Button>
         </DialogActions>
       </Dialog>
 
