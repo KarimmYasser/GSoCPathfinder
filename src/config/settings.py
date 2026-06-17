@@ -52,6 +52,12 @@ class Settings(BaseSettings):
     embed_batch_size: int = 32
 
 
+_settings_instance: Settings | None = None
+
+
 def get_settings() -> Settings:
     """Get cached application settings instance."""
-    return Settings()
+    global _settings_instance
+    if _settings_instance is None:
+        _settings_instance = Settings()
+    return _settings_instance

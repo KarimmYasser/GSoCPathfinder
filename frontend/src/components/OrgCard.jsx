@@ -5,6 +5,7 @@ import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
 import BugReportIcon from '@mui/icons-material/BugReport';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { renderMarkdown } from '../utils/markdown';
+import API_BASE from '../config';
 
 const parseExplanation = (explanation) => {
   if (!explanation) return null;
@@ -64,7 +65,7 @@ const OrgCard = ({ org, cvText }) => {
   const fetchIssues = async () => {
     setLoadingIssues(true);
     try {
-      const response = await fetch('http://localhost:8000/api/issues', {
+      const response = await fetch(`${API_BASE}/api/issues`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url: org.url })
@@ -86,7 +87,7 @@ const OrgCard = ({ org, cvText }) => {
   const draftProposal = async () => {
     setLoadingProposal(true);
     try {
-      const response = await fetch('http://localhost:8000/api/proposal', {
+      const response = await fetch(`${API_BASE}/api/proposal`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ cv_text: cvText, org_name: org.canonical_name, org_desc: org.description })
@@ -105,7 +106,7 @@ const OrgCard = ({ org, cvText }) => {
   const optimizeCV = async () => {
     setLoadingRoadmap(true);
     try {
-      const response = await fetch('http://localhost:8000/api/optimize_cv', {
+      const response = await fetch(`${API_BASE}/api/optimize_cv`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ cv_text: cvText, org_name: org.canonical_name, org_desc: org.description })

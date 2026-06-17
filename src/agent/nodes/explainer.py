@@ -1,3 +1,5 @@
+import re
+
 from langchain_core.messages import HumanMessage
 from langchain_core.runnables import RunnableConfig
 
@@ -265,8 +267,6 @@ Format your output exactly as follows (use these headers):
                 score_str = parts[1].strip()
 
                 # Parse the score number
-                import re
-
                 match = re.search(r"\b\d{1,3}\b", score_str)
                 if match:
                     val = int(match.group())

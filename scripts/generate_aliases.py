@@ -78,7 +78,7 @@ def main():
         aliases_yaml["aliases"][canonical] = aliases
 
     # Save to config file
-    config_dir = Path("d:/Projects/GSoCPathfinder/src/config")
+    config_dir = Path(__file__).resolve().parent.parent / "src" / "config"
     config_dir.mkdir(parents=True, exist_ok=True)
     out_file = config_dir / "org_aliases.yaml"
 

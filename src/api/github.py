@@ -1,4 +1,5 @@
 import re
+import time
 
 import httpx
 from pydantic import BaseModel
@@ -22,16 +23,26 @@ def parse_github_repo(url: str) -> str | None:
     return None
 
 
+# Simple in-memory cache: {repo: (timestamp, issues)}
+_cache: dict[str, tuple[float, list[GitHubIssue]]] = {}
+_CACHE_TTL = 3600  # 1 hour
+
+
 async def fetch_good_first_issues(url: str) -> list[GitHubIssue]:
     """Fetch 'good first issue' or 'help wanted' issues for a given repo URL."""
     repo = parse_github_repo(url)
     if not repo:
         return []
 
+    # Check cache
+    now = time.time()
+    if repo in _cache:
+        cached_time, cached_issues = _cache[repo]
+        if now - cached_time < _CACHE_TTL:
+            return cached_issues
+
     api_url = f"https://api.github.com/repos/{repo}/issues"
 
-    # Using a generic query for open issues with specific labels
-    # Note: GitHub API limits unauthenticated requests to 60/hr
     params = {
         "state": "open",
         "labels": "good first issue",
@@ -47,7 +58,6 @@ async def fetch_good_first_issues(url: str) -> list[GitHubIssue]:
             if response.status_code == 200:
                 data = response.json()
                 for item in data:
-                    # Exclude pull requests
                     if "pull_request" not in item:
                         issues.append(
                             GitHubIssue(
@@ -57,6 +67,8 @@ async def fetch_good_first_issues(url: str) -> list[GitHubIssue]:
                                 number=item.get("number", 0),
                             )
                         )
+            elif response.status_code == 403:
+                print(f"GitHub API rate limit hit for {repo}. Cached results will be used if available.")
             elif response.status_code == 404:
                 pass  # Repo might be private or deleted
         except Exception as e:
@@ -85,4 +97,6 @@ async def fetch_good_first_issues(url: str) -> list[GitHubIssue]:
             except Exception:
                 pass
 
+    # Update cache
+    _cache[repo] = (now, issues)
     return issues

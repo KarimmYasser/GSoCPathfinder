@@ -6,6 +6,7 @@ import SendIcon from '@mui/icons-material/Send';
 import RemoveIcon from '@mui/icons-material/Remove';
 import AddIcon from '@mui/icons-material/Add';
 import { renderMarkdown } from '../utils/markdown';
+import API_BASE from '../config';
 
 const ChatWidget = ({ context }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -88,7 +89,7 @@ const ChatWidget = ({ context }) => {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:8000/api/chat', {
+      const response = await fetch(`${API_BASE}/api/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

@@ -5,7 +5,7 @@ from typing import TypedDict
 from models import RankedOrganization, UserProfile
 
 
-class AgentState(TypedDict):
+class AgentState(TypedDict, total=False):
     """The state passed between LangGraph nodes."""
 
     # Input

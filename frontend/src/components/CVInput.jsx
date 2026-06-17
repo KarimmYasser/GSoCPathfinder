@@ -10,6 +10,7 @@ import {
   Switch,
 } from "@mui/material";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+import API_BASE from "../config";
 
 const CVInput = ({ onResults }) => {
   const [cvText, setCvText] = useState("");
@@ -38,7 +39,7 @@ const CVInput = ({ onResults }) => {
     setCurrentStatus("Initializing matching pipeline...");
 
     try {
-      const response = await fetch("http://localhost:8000/api/match/stream", {
+      const response = await fetch(`${API_BASE}/api/match/stream`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

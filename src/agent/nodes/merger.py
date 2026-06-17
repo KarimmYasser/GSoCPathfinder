@@ -44,6 +44,6 @@ async def merger_node(state: AgentState, config: RunnableConfig = None) -> dict:
 
     return {
         "ranked_organizations": top_orgs,
-        "global_score_min": min(all_scores),
-        "global_score_max": max(all_scores),
+        "global_score_min": min(all_scores) if all_scores else 0.0,
+        "global_score_max": max(all_scores) if all_scores else 1.0,
     }

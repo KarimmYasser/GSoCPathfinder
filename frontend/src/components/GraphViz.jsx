@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import ForceGraph2D from 'react-force-graph-2d';
 import { Box, Typography, CircularProgress, Paper, useTheme } from '@mui/material';
+import API_BASE from '../config';
 
 const GraphViz = ({ skills, rankings }) => {
   const theme = useTheme();
@@ -43,7 +44,7 @@ const GraphViz = ({ skills, rankings }) => {
       setLoading(true);
       try {
         const orgNames = (rankings || []).slice(0, 10).map(o => o.canonical_name);
-        const response = await fetch('http://localhost:8000/api/graph_data', {
+        const response = await fetch(`${API_BASE}/api/graph_data`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ skills: skills, org_names: orgNames })

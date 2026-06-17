@@ -71,8 +71,9 @@ aliases:
   OpenAstronomy:
   - openastronomy
   OpenMS:
-  - OpenMRS
   - OpenMS Inc
+  OpenMRS:
+  - OpenMRS
   Plone:
   - Plone Foundation
   R Project for Statistical Computing:

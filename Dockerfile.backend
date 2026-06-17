@@ -12,8 +12,6 @@ RUN uv pip install --system -r pyproject.toml
 
 # Copy source code
 COPY ./src /app/src
-# Include config files
-COPY ./config /app/config
 
 # Copy .env
 COPY .env .env

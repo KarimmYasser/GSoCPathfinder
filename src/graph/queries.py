@@ -55,7 +55,7 @@ class GraphQueries:
         WITH o, op ORDER BY op.year DESC
         WITH o, collect(op) AS profiles
         
-        LET latest = profiles[0]
+        WITH o, profiles, profiles[0] AS latest
         
         OPTIONAL MATCH (latest)-[:USES]->(t:Technology)
         WITH o, latest, profiles, collect(t.name) AS technologies
