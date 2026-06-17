@@ -68,7 +68,9 @@ async def fetch_good_first_issues(url: str) -> list[GitHubIssue]:
                             )
                         )
             elif response.status_code == 403:
-                print(f"GitHub API rate limit hit for {repo}. Cached results will be used if available.")
+                print(
+                    f"GitHub API rate limit hit for {repo}. Cached results will be used if available."
+                )
             elif response.status_code == 404:
                 pass  # Repo might be private or deleted
         except Exception as e:

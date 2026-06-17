@@ -19,36 +19,29 @@ class TestF1SkillOverlap:
         assert ScoringFactors.f1_skill_overlap([], [], "") == 0.0
 
     def test_exact_match(self):
-        score = ScoringFactors.f1_skill_overlap(
-            ["python", "rust"], ["python", "rust"], ""
-        )
+        score = ScoringFactors.f1_skill_overlap(["python", "rust"], ["python", "rust"], "")
         assert score == 1.0
 
     def test_no_match(self):
-        score = ScoringFactors.f1_skill_overlap(
-            ["python", "rust"], ["go", "java"], ""
-        )
+        score = ScoringFactors.f1_skill_overlap(["python", "rust"], ["go", "java"], "")
         assert score == 0.0
 
     def test_partial_match(self):
         # Rust engine: Jaccard = intersection/union = {python}/{python,rust,go} = 1/3
-        score = ScoringFactors.f1_skill_overlap(
-            ["python", "rust"], ["python", "go"], ""
-        )
+        score = ScoringFactors.f1_skill_overlap(["python", "rust"], ["python", "go"], "")
         assert pytest.approx(score) == pytest.approx(1 / 3)
 
     def test_weighted_by_frequency(self):
         # Rust engine applies frequency weighting differently than Python fallback
         score = ScoringFactors.f1_skill_overlap(
-            ["python", "rust"], ["python", "go"],
-            "I love Python. Python is great. Python everywhere."
+            ["python", "rust"],
+            ["python", "go"],
+            "I love Python. Python is great. Python everywhere.",
         )
         assert 0.0 < score <= 1.0
 
     def test_case_insensitive(self):
-        score = ScoringFactors.f1_skill_overlap(
-            ["Python", "RUST"], ["python", "Rust"], ""
-        )
+        score = ScoringFactors.f1_skill_overlap(["Python", "RUST"], ["python", "Rust"], "")
         assert score == 1.0
 
 
@@ -99,14 +92,10 @@ class TestF4TopicAlignment:
         assert ScoringFactors.f4_topic_alignment(["web"], ["ml"]) == 0.0
 
     def test_exact_match(self):
-        assert ScoringFactors.f4_topic_alignment(
-            ["ml", "ai"], ["ml", "ai"]
-        ) == 1.0
+        assert ScoringFactors.f4_topic_alignment(["ml", "ai"], ["ml", "ai"]) == 1.0
 
     def test_partial_match(self):
-        score = ScoringFactors.f4_topic_alignment(
-            ["ml", "web"], ["ml", "ai"]
-        )
+        score = ScoringFactors.f4_topic_alignment(["ml", "web"], ["ml", "ai"])
         assert 0.0 < score < 1.0
 
 
@@ -132,9 +121,7 @@ class TestF6OrgStability:
 
     def test_long_lived_org(self):
         weights = load_weights()
-        score = ScoringFactors.f6_org_stability(
-            list(range(2016, 2027)), 2026, weights
-        )
+        score = ScoringFactors.f6_org_stability(list(range(2016, 2027)), 2026, weights)
         assert score > 0.8
 
     def test_single_year_org(self):
