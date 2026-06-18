@@ -11,7 +11,6 @@ import {
   IconButton,
   Tooltip,
 } from "@mui/material";
-import SchoolIcon from "@mui/icons-material/School";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import CVInput from "./components/CVInput";
@@ -146,8 +145,10 @@ function App() {
       <CssBaseline />
 
       <AppBar position="static" color={mode === "dark" ? "default" : "primary"} elevation={mode === "dark" ? 0 : 1}>
-        <Toolbar>
-          <SchoolIcon sx={{ mr: 2 }} />
+        <Toolbar sx={{ minHeight: "72px !important" }}>
+          <Box sx={{ mr: 2, display: "flex", alignItems: "center", justifyContent: "center", bgcolor: "white", borderRadius: "50%", p: 0.5, width: 56, height: 56, boxShadow: "0 2px 6px rgba(0,0,0,0.2)" }}>
+            <Box component="img" src="/logo.svg" alt="Logo" sx={{ height: 46, width: "auto" }} />
+          </Box>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             GSoC Pathfinder
           </Typography>
